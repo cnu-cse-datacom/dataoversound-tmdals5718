@@ -128,7 +128,7 @@ public class Listentone {
         }
     }
 
-    private int findPowersize(int round) { //buffersize는 2의 제곱수 형태로 들어간다.
+    private int findPowersize(int round) { 
         int a = 1;
         while(true) {
             a = a*2;

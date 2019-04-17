@@ -94,21 +94,21 @@ public class Listentone {
 
     public void PreRequest() { //listen_linux
         int blocksize = findPowersize((int) (long) Math.round(interval / 2 * mSampleRate));
-        short[] buffer = new short[blocksize]; //chuck
-        double[] trans = new double[blocksize]; // chuck = buffer -> trans
-        List<Double> stream = new ArrayList<>();
+        short[] buffer = new short[blocksize]; ///chunk = wav.readframes(chunk_size)
+        double[] chunk = new double[blocksize];
+        List<Double> stream = new ArrayList<>(); // packet = []
         List<Integer> byte_stream = new ArrayList<>();
 
         while (true) {
             int bufferedReadResult = mAudioRecord.read(buffer, 0, blocksize);
-            if(bufferedReadResult<0)
+            if(bufferedReadResult<0) //if not l " continue
                 continue;
-            for(int i =0; i<blocksize; i++)
-                trans[i] = buffer[i];
+            for(int i =0; i<blocksize; i++) //chunk = np.fromstring(data, dtype=np.int16)
+                chunk[i] = buffer[i];
 
-            double dom = findFrequency(trans);
+            double dom = findFrequency(chunk); //dom = dominant(frame_rate, chunk)
 
-            if(startFlag && match(dom,HANDSHAKE_END_HZ)) {
+            if(startFlag && match(dom,HANDSHAKE_END_HZ)) { // if in_packet and match(dom, HANDSHAKE_END_HZ):
                 byte_stream = extract_packet(stream);
                 Log.d("byte_stream", byte_stream.toString());
                 String result = "";
@@ -119,15 +119,14 @@ public class Listentone {
                 stream.clear();
                 startFlag=false;
             }
-            else if(startFlag)
+            else if(startFlag) //elif in_packet:
                 stream.add(dom);
-            else if(match(dom,HANDSHAKE_START_HZ))
+            else if(match(dom,HANDSHAKE_START_HZ)) //elif match(dom, HANDSHAKE_START_HZ):
                 startFlag =true;
             Log.d("dom", ""+dom);
 
         }
     }
-
 
     private int findPowersize(int round) { //buffersize는 2의 제곱수 형태로 들어간다.
         int a = 1;

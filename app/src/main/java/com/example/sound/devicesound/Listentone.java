@@ -128,7 +128,7 @@ public class Listentone {
         }
     }
 
-    private int findPowersize(int round) { 
+    private int findPowersize(int round) { //2의 제곱수 형태 
         int a = 1;
         while(true) {
             a = a*2;
